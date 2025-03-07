@@ -1,23 +1,11 @@
-import logo from './logo.svg';
+import React from 'react';
 import './App.css';
+import HomePage from './HomePage';  // Import your new HomePage component
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Come on Pugazh, Let's knock this motherfucker down!!! Woohooo!!!
-        </p>
-        <a
-          className="App-link"
-          href="https://google.com/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React by Google 
-        </a>
-      </header>
+      <HomePage />  {/* Render the HomePage component */}
     </div>
   );
 }
