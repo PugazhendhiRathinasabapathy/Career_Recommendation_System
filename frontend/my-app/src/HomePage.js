@@ -1,13 +1,15 @@
-// src/HomePage.js
 import React from 'react';
-import './HomePage.css'; // CSS file for styling the page
+import { useNavigate } from 'react-router-dom';  // Import useNavigate
+import './HomePage.css'; 
 
 const HomePage = () => {
+  const navigate = useNavigate();  // Hook for navigation
+
   const handleClick = () => {
-    alert('Let’s Begin the Journey!');
+    navigate('/questions');  // Navigate to Questions.js
   };
 
-return (
+  return (
     <div className="home-container">
         <header className="header">
             <h1 className="title">CareerPathAI</h1>
@@ -37,7 +39,7 @@ return (
             <p>© 2025 CareerPathAI. All rights reserved.</p>
         </footer>
     </div>
-);
+  );
 };
 
 export default HomePage;

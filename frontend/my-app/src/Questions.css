@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Lobster&family=Montserrat:wght@400;700&family=Roboto:wght@400;700&display=swap');
+
+.questions-container {
+  font-family: 'Roboto', sans-serif;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  background: #f4f6f9;  /* Soft background color */
+}
+
+.header {
+  background: linear-gradient(135deg, #e81111, #2236ef);  /* Gradient background for header */
+  color: white;
+  padding: 60px 20px;
+  border-radius: 0 0 40px 40px; /* Rounded corners for the header */
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.title {
+  font-family: 'Montserrat', sans-serif; /* Unique font for title */
+  font-size: 3.5em;
+  font-weight: bold;
+  margin: 0;
+}
+
+.subtitle {
+  font-family: 'Montserrat', sans-serif; /* Unique font for subtitle */
+  font-size: 1.5em;
+  margin-top: 10px;
+}
+
+.question-form {
+  margin: 40px 20px;
+}
+
+.option {
+  margin: 20px 0;
+}
+
+.option label {
+  font-family: 'Roboto', sans-serif; /* Unique font for options */
+  font-size: 1.2em;
+  color: #555;
+}
+
+.submit-button {
+  margin-top: 20px;
+  padding: 15px 30px;
+  font-size: 1.2em;
+  color: #fff;
+  background-color: #ff6f61; /* Eye-catching color for the button */
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.submit-button:hover {
+  background-color: #e45747; /* Darker shade on hover */
+  transform: scale(1.05); /* Slightly enlarge on hover */
+}
