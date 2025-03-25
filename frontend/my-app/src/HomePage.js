@@ -12,7 +12,7 @@ const HomePage = () => {
   return (
     <div className="home-container">
         <header className="header">
-            <h1 className="title">CareerPathAI</h1>
+            <h1 className="title">💡 CareerPathAI</h1>
             <p className="subtitle">Unlock Your Potential with Personalized Career Guidance!</p>
             <button className="begin-button" onClick={handleClick}>Let’s Begin</button>
         </header>
@@ -30,8 +30,8 @@ const HomePage = () => {
             <ul>
                 <li>AI-powered career recommendations</li>
                 <li>Personalized career quizzes</li>
-                <li>Track your career progress and goals</li>
-                <li>Guided learning resources and job opportunities</li>
+                <li>Provides top 3 career options</li>
+                <li>Guided learning resources</li>
             </ul>
         </section>
 

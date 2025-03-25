@@ -1,4 +1,4 @@
-/* src/HomePage.css */
+/* Importing fonts */
 @import url('https://fonts.googleapis.com/css2?family=Lobster&family=Montserrat:wght@400;700&family=Roboto:wght@400;700&display=swap');
 
 .home-container {
@@ -6,56 +6,66 @@
   text-align: center;
   margin: 0;
   padding: 0;
-  background: #f4f6f9;  /* Soft background color */
+  background: white; /* Soft background color for the entire page */
 }
 
 .header {
   background: linear-gradient(135deg, #e81111, #2236ef);  /* Gradient background for header */
   color: white;
-  padding: 60px 20px;
-  border-radius: 0 0 40px 40px; /* Rounded corners for the header */
-  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  padding: 80px 20px;  /* Increased padding for a more spacious header */
+  border-radius: 0 0 60px 60px; /* Rounded corners for the header */
+  box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.1); /* Slightly more subtle shadow */
 }
 
 .title {
-  font-family: 'Montserrat', sans-serif; /* Unique font for title */
-  font-size: 3.5em;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 4em;  /* Bigger title */
   font-weight: bold;
   margin: 0;
+  letter-spacing: 2px; /* Added letter spacing for a more elegant look */
 }
 
 .subtitle {
-  font-family: 'Montserrat', sans-serif; /* Unique font for subtitle */
-  font-size: 1.5em;
-  margin-top: 10px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.6em;  /* Increased subtitle size */
+  margin-top: 15px;
+  color: #fff;
 }
 
 .begin-button {
-  margin-top: 20px;
-  padding: 15px 30px;
-  font-size: 1.2em;
+  margin-top: 30px;
+  padding: 18px 35px;
+  font-size: 1.3em;
   color: #fff;
-  background-color: #ff6f61; /* Eye-catching color for the button */
+  background-color: #ff6f61; /* Eye-catching button color */
   border: none;
-  border-radius: 25px;
+  border-radius: 30px;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .begin-button:hover {
   background-color: #e45747; /* Darker shade on hover */
-  transform: scale(1.05); /* Slightly enlarge on hover */
+  transform: scale(1.1); /* More prominent zoom effect */
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2); /* Add shadow effect on hover */
 }
 
 .intro, .features {
-  margin: 40px 20px;
+  margin: 60px 20px;
+}
+
+.intro p {
+  font-size: 1.3em;  /* Increased font size for introduction */
+  color: #555;
+  margin-bottom: 30px;
 }
 
 .section-title {
-  font-family: 'Montserrat', sans-serif; /* Unique font for section titles */
-  font-size: 2.2em;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2.5em;
   color: #333;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
+  letter-spacing: 1px;
 }
 
 .features ul {
@@ -64,15 +74,16 @@
 }
 
 .features li {
-  font-family: 'Roboto', sans-serif; /* Unique font for list items */
-  font-size: 1.2em;
-  margin: 12px 0;
+  font-family: 'Roboto', sans-serif;
+  font-size: 1.3em;  /* Increased font size for features */
+  margin: 15px 0;
   color: #555;
-  transition: color 0.3s ease;
+  transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .features li:hover {
-  color: #000; /* Darker color on hover */
+  color: #222; /* Darker color on hover */
+  transform: translateX(10px); /* Slide effect when hovered */
 }
 
 .footer {
@@ -84,8 +95,12 @@
   position: fixed;
   width: 100%;
   bottom: 0;
+  box-shadow: 0px -5px 10px rgba(0, 0, 0, 0.2); /* Add subtle shadow at the top */
 }
 
 footer p {
   margin: 0;
+  font-size: 1em;
+  color: #ccc; /* Slightly lighter footer text */
 }
+

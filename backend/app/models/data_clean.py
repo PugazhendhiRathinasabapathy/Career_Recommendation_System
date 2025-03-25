@@ -31,6 +31,11 @@ def initialize_chromadb(db_path="./processed_data/chroma_db"):
     """Initializes ChromaDB client and returns the collection."""
     chroma_client = chromadb.PersistentClient(path=db_path)
     collection = chroma_client.get_or_create_collection(name="career_recommendation")
+    if collection.count() > 0:
+        print(f"🔍 Found {collection.count()} records in ChromaDB")
+    else:
+        data = load_and_clean_data("/Users/pugazhendhi/MachineLearning/Career_Recommendation_System/backend/app/models/processed_data/Final_Occupation_Data_Cleaned.xlsx")
+        store_data_in_chromadb(data, collection)
     return chroma_client, collection
 
 def store_data_in_chromadb(data, collection):

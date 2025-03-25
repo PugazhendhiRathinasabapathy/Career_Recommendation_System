@@ -5,7 +5,9 @@ from langchain_groq import ChatGroq  # Now import should work
 from langchain.prompts import PromptTemplate
 from langchain.document_loaders import WebBaseLoader
 from dotenv import load_dotenv
-from data_clean import initialize_chromadb
+from models.data_clean import initialize_chromadb
+from bs4 import BeautifulSoup
+import requests
 import os
 import re # Regular Expression
 
@@ -53,23 +55,63 @@ def generate_question(previous_answers):
 
 def get_career_recommendations(user_answers):
     """Queries ChromaDB for career matches based on user answers."""
-    query_text = " ".join(user_answers)  # Combine responses
-    results = collection.query(query_texts=[query_text], n_results=3)  # Get top 3 matches
-    
-    return results["documents"][0] if results["documents"] else ["No match found"]
+    cleaned_answers = [answer.split(") ", 1)[1] if ") " in answer else answer for answer in user_answers]  # Removes 'A)', 'B)' etc.
+    # cleaned_answers = "I love coding"
+    query_text = " ".join(cleaned_answers)  # Combine cleaned responses
+    results = collection.query(query_texts=[query_text], n_results=3)
+    if not results:
+        return ["No match found"]
+    else:
+        job_id = extract_job_ids(results["documents"])
+        jobs = fetch_web_results(job_id)
+        print(jobs)
+        return jobs
+    # return results["documents"] if results["documents"] else ["No match found"]
 
-def fetch_web_results(id):
-    """Fetches web-based information for a given career."""
-    url = "https://www.google.com/"
-    loader = WebBaseLoader(url)
-    return loader.load()
+def fetch_web_results(ids):
+    final = []
+    for i in ids:
+        id = i[0]
+
+        """Fetches the header and first <p> content from a given career page and returns as a string."""
+        url = f"https://www.onetonline.org/link/details/{id}"
+        
+        try:
+            response = requests.get(url, timeout=10)  # Fetch the page with a timeout
+            response.raise_for_status()  # Raise an error for bad responses (4xx, 5xx)
+        except requests.RequestException as e:
+            return f"Error: Failed to fetch data ({str(e)})"
+
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        # Extract job title (assuming it's inside an <h1> tag)
+        header = soup.find("h1").get_text(strip=True) if soup.find("h1") else "No header found"
+
+        # Extract the first meaningful paragraph
+        first_paragraph = None
+        for p in soup.find_all("p"):
+            text = p.get_text(strip=True)
+            if len(text) > 30:  # Ensure it's a meaningful paragraph
+                first_paragraph = text
+                break
+
+        if not first_paragraph:
+            first_paragraph = "No description available"
+
+        # Remove job codes, "Bright Outlook", and "Updated YYYY"
+        header = re.sub(r'\d{2}-\d{4}\.\d{2}', '', header)  # Remove job codes like 11-1021.00
+        header = re.sub(r'(Bright Outlook|Updated \d{4})', '', header).strip()  # Remove "Bright Outlook" and "Updated YYYY"
+
+        final.append(f"{header} : {first_paragraph}")  # Return as a single formatted string
+    return final
 
 def extract_job_ids(texts):
     """Extracts only job role IDs from the given text."""
     matches = []
-    for text in texts:
-        pattern = r'(\d{2}-\d{4}\.\d{2})'
-        matches.append(re.findall(pattern, text))
+    for element in texts:
+        for text in element:
+            pattern = r'(\d{2}-\d{4}\.\d{2})'
+            matches.append(re.findall(pattern, text))
     return matches
 
 def run_career_advisor():

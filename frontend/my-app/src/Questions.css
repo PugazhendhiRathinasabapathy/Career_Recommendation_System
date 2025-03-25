@@ -2,10 +2,10 @@
 
 .questions-container {
   font-family: 'Roboto', sans-serif;
-  text-align: center;
+  text-align: justify;
   margin: 0;
   padding: 0;
-  background: #f4f6f9;  /* Soft background color */
+  background: white;
 }
 
 .header {
@@ -20,17 +20,21 @@
   font-family: 'Montserrat', sans-serif; /* Unique font for title */
   font-size: 3.5em;
   font-weight: bold;
+  text-align: center;
   margin: 0;
 }
 
 .subtitle {
   font-family: 'Montserrat', sans-serif; /* Unique font for subtitle */
   font-size: 1.5em;
+  text-align: center;
   margin-top: 10px;
 }
 
 .question-form {
   margin: 40px 20px;
+  font-size: 1em;  /* Large font size for results */
+  line-height: 1.8; 
 }
 
 .option {
@@ -44,18 +48,21 @@
 }
 
 .submit-button {
-  margin-top: 20px;
-  padding: 15px 30px;
-  font-size: 1.2em;
+  position: fixed; /* Fixed positioning */
+  bottom: 20%; /* Space from the bottom */
+  left: 48%; /* Center horizontally */
+  transform: translateX(-50%); /* Exact centering */
+  padding: 20px 40px; /* Bigger padding for a larger button */
+  font-size: 1.4em; /* Larger font size */
   color: #fff;
   background-color: #ff6f61; /* Eye-catching color for the button */
   border: none;
-  border-radius: 25px;
+  border-radius: 30px; /* More rounded corners */
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .submit-button:hover {
   background-color: #e45747; /* Darker shade on hover */
-  transform: scale(1.05); /* Slightly enlarge on hover */
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
