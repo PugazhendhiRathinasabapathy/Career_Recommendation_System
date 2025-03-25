@@ -8,10 +8,29 @@ const Questions = () => {
     setSelectedOption(event.target.value);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    alert(`You selected: ${selectedOption}`);
-  };
+    
+    if (!selectedOption) {
+        alert("Please select an option!");
+        return;
+    }
+
+    try {
+        const response = await fetch("http://127.0.0.1:8000/submit-answer/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ selected_option: selectedOption }),
+        });
+
+        const data = await response.json();
+        alert(data.message); // Show response from the backend
+    } catch (error) {
+        console.error("Error sending data:", error);
+    }
+};
 
   return (
     <div className="questions-container">
