@@ -1,4 +1,4 @@
-# CareerPathAI Using Large Language Model (LLaMa 3)
+# CareerPathAI Using Large Language Model (LLaMa)
 ![Screenshot 2025-03-25 at 7 50 10 PM](https://github.com/user-attachments/assets/0d139638-e26d-4f90-9b8b-47075cdd2ee6)
 ## Project Overview
 
