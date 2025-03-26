@@ -1,10 +1,13 @@
 # CareerPathAI Using Large Language Model (LLaMa)
+
 ![Screenshot 2025-03-25 at 7 50 10 PM](https://github.com/user-attachments/assets/0d139638-e26d-4f90-9b8b-47075cdd2ee6)
+
 ## Project Overview
 
 The **Career Recommendation System** is an AI-powered web application designed to assist individuals in making informed career decisions. By leveraging **Large Language Models (LLM)**, the system generates personalized career suggestions based on a series of questions related to the user’s interests, skills, and preferences. It dynamically adapts its questions based on the user’s answers, offering a tailored experience that helps users discover the best-fit career options.
 
 This system utilizes advanced AI techniques and is especially useful for students, professionals, or anyone looking to explore potential career opportunities.
+
 ## Features
 
 - **Personalized Career Recommendations**: Uses LLM to process user input and suggest the top three career paths tailored to the user's skills and interests.
@@ -12,7 +15,6 @@ This system utilizes advanced AI techniques and is especially useful for student
 - **Detailed Career Insights**: Career recommendations come with a comprehensive job description, potential salary range, and other relevant data.
 - **User-Friendly Interface**: An interactive UI makes the experience smooth and intuitive for users.
 - **AI-Powered**: The system uses **LLaMA** (a state-of-the-art language model) for natural language processing to generate career-related questions and recommendations.
-
 
 ![Screenshot 2025-03-25 at 7 50 31 PM](https://github.com/user-attachments/assets/91208725-d464-4668-8c77-d97885e9e919)
 
@@ -36,45 +38,45 @@ This system utilizes advanced AI techniques and is especially useful for student
 
 1. Clone the repository:
 
-    ```bash
-    git clone https://github.com/yourusername/Career_Recommendation_System.git
-    ```
+   ```bash
+   git clone https://github.com/yourusername/Career_Recommendation_System.git
+   ```
 
 2. Navigate to the project directory:
 
-    ```bash
-    cd Career_Recommendation_System
-    ```
+   ```bash
+   cd Career_Recommendation_System
+   ```
 
 3. Install dependencies:
 
-    For the frontend:
+   For the frontend:
 
-    ```bash
-    cd frontend
-    npm install
-    ```
+   ```bash
+   cd frontend
+   npm install
+   ```
 
 4. For backend (if applicable):
 
-    ```bash
-    cd backend
-    npm install
-    ```
+   ```bash
+   cd backend
+   pip install --no-cache-dir -r requirements.txt
+   ```
 
 5. Start the application:
 
-    For the frontend:
+   For the frontend:
 
-    ```bash
-    npm start
-    ```
+   ```bash
+   npm start
+   ```
 
-    For the backend (if applicable):
+   For the backend (if applicable):
 
-    ```bash
-    node server.js
-    ```
+   ```bash
+   node server.js
+   ```
 
 ## Usage
 
@@ -96,6 +98,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Thanks to **LLaMA** for dynamic question generation and career recommendation.
 - Special thanks to **ChromaDB** for efficient storage and retrieval of career-related data.
 - The project leverages **BeautifulSoup** for web scraping and gathering additional career data.
-
-
-
