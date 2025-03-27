@@ -1,0 +1,15 @@
+services:
+  # FASTAPI SERVICE
+  backend:
+    container_name: backend
+    build:
+      context: ./backend
+      dockerfile: fastapi.dockerfile
+    ports:
+      - 8000:8000
+    environment:
+      - FASTAPI_ENV=development
+      - PYTHONUNBUFFERED=1
+      - FASTAPI_DEBUG=1
+    volumes:
+      - ./backend:/app
