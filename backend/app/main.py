@@ -33,7 +33,7 @@ async def submit_answer(response: UserResponse):
     """Stores user's response and returns the next question or career recommendation."""
     user_memory.append(response.selected_option)
 
-    if len(user_memory) >= 20:  # After 20 questions, return recommendations
+    if len(user_memory) >= 5:  # After 20 questions, return recommendations
         careers = get_career_recommendations(user_memory)
         user_memory.clear()
         print(user_memory)

@@ -28,30 +28,58 @@ user_memory = []
 
 def generate_question(previous_answers):
     """Generates a career-related question dynamically based on previous answers."""
-    prompt = PromptTemplate.from_template("""
-    You are an intelligent career advisor AI that helps users find the most suitable career based on their responses. 
-    Your job is to **ask one question at a time**, with four multiple-choice options.
-
-    ### **Instructions:**
-    1. The next question should be relevant based on the user's previous answers.
-    2. Keep the question concise but informative.
-    3. Make sure the four answer choices represent **distinct career-related preferences**.
-    4. The answers should be **diverse** (e.g., different skills, interests, or work preferences).
-
-    ### **User Responses So Far:**
-    {previous_answers}
-
-    ### **Output Format:**
-    No Preamble, just the question and options.
-    Question: <your generated question>
-    A) <Option 1>
-    B) <Option 2>
-    C) <Option 3>
-    D) <Option 4>
-    """)
     
-    full_prompt = prompt.format(previous_answers=", ".join(previous_answers))
-    return llm.invoke(full_prompt)
+    # Handle Empty previous_answers to prevent errors
+    previous_answers_str = ", ".join(previous_answers) if previous_answers else "No responses yet"
+    
+    # Expanded category list for better recommendations
+    categories = [
+        "Interests", 
+        "Skills", 
+        "Education", 
+        "Experience", 
+        "Work Environment Preferences", 
+        "Industry Preference", 
+        "Career Growth Aspirations"
+    ]
+    
+    # Rotate through categories based on previous answers count
+    next_category = categories[len(previous_answers) % len(categories)]  
+
+    # Define the prompt template correctly
+    prompt_template = PromptTemplate.from_template("""
+    You are an AI career advisor. Your ONLY task is to ask **one career-related multiple-choice question at a time** with exactly **four answer options**.
+    You must ask questions in order to narrow the user's career path based on their responses. 
+    You must always provide 4 options no matter what, never ask a question without 4 options.
+    You must NOT REPEAT questions.
+
+    ### **Instructions (Strict Adherence Required):**
+    1. **NO preamble, NO introduction, NO explanations.**
+    2. The question must be about **{next_category}**.
+    3. **Output Format:**
+       - **Question:** (Concise, relevant, and informative)
+       - **Four answer choices (A, B, C, D) is a must**
+    4. The next question must be **influenced by previous answers** but still follow category rotation.
+    
+    ### **User Responses So Far:**
+    {previous_answers_str}
+
+    ### **Output Format (STRICTLY FOLLOW THIS, NO EXTRA TEXT):**
+    Question: <your generated question>  
+    A) <Option 1>  
+    B) <Option 2>  
+    C) <Option 3>  
+    D) <Option 4>  
+    """)
+
+    # Correctly format the prompt with actual values
+    formatted_prompt = prompt_template.format(
+        next_category=next_category, 
+        previous_answers_str=previous_answers_str
+    )
+
+    # Invoke the LLM with the formatted string instead of a template object
+    return llm.invoke(formatted_prompt)
 
 def get_career_recommendations(user_answers):
     """Queries ChromaDB for career matches based on user answers."""
@@ -75,6 +103,7 @@ def fetch_web_results(ids):
 
         """Fetches the header and first <p> content from a given career page and returns as a string."""
         url = f"https://www.onetonline.org/link/details/{id}"
+        print(url) # Checking if the URL is valid
         
         try:
             response = requests.get(url, timeout=10)  # Fetch the page with a timeout
@@ -98,11 +127,67 @@ def fetch_web_results(ids):
         if not first_paragraph:
             first_paragraph = "No description available"
 
+        # Extract Technology Skills (first 5)
+        tech_skills = []
+        tech_skills_section = soup.find("div", class_="section_TechnologySkills")
+        if tech_skills_section:
+            skill_items = tech_skills_section.find_all("li", limit=5)
+            for item in skill_items:
+                skill_text = item.get_text(separator=" ", strip=True).replace("Related occupations", "").strip()
+                tech_skills.append(skill_text)
+
+        # Extract Skills (first 5)
+        skills_section = soup.find("div", class_="section_Skills")
+        skills = []
+        if skills_section:
+            rows = skills_section.find_all("tr", limit=5)
+            for row in rows:
+                skill_cell = row.find_all("td")
+                if len(skill_cell) > 1:
+                    skill_text = skill_cell[1].get_text(separator=" ", strip=True).replace("Related occupations", "").strip()
+                    skills.append(skill_text)
+
+        # Extract Knowledge (first 5)
+        knowledge_section = soup.find("div", class_="section_Knowledge")
+        knowledge = []
+        if knowledge_section:
+            rows = knowledge_section.find_all("tr", limit=5)
+            for row in rows:
+                knowledge_cell = row.find_all("td")
+                if len(knowledge_cell) > 1:
+                    knowledge_text = knowledge_cell[1].get_text(separator=" ", strip=True).replace("Related occupations", "").strip()
+                    knowledge.append(knowledge_text)
+
+        # Extract Median Wages and Projected Job Openings
+        wages_section = soup.find("div", id="WagesEmployment")
+        median_wages = "N/A"
+        projected_openings = "N/A"
+        if wages_section:
+            dl_items = wages_section.find_all("dt")
+            dd_items = wages_section.find_all("dd")
+            for dt, dd in zip(dl_items, dd_items):
+                label = dt.get_text(strip=True)
+                value = dd.get_text(strip=True)
+                if "Median wages" in label:
+                    median_wages = value
+                if "Projected job openings" in label:
+                    projected_openings = value
+
+        # Extract Related Occupations (first 3)
+        related_occupations_section = soup.find("div", class_="section_RelatedOccupations")
+        related_occupations = []
+        if related_occupations_section:
+            related_list = related_occupations_section.find_all("li", limit=3)
+            for item in related_list:
+                text = item.get_text(separator=" ", strip=True)
+                text = re.sub(r'^\d{2}-\d{4}\.\d{2}\s*', '', text)  # Remove job codes like 25-1031.00
+                related_occupations.append(text)
+
         # Remove job codes, "Bright Outlook", and "Updated YYYY"
         header = re.sub(r'\d{2}-\d{4}\.\d{2}', '', header)  # Remove job codes like 11-1021.00
         header = re.sub(r'(Bright Outlook|Updated \d{4})', '', header).strip()  # Remove "Bright Outlook" and "Updated YYYY"
 
-        final.append(f"{header} : {first_paragraph}")  # Return as a single formatted string
+        final.append(f"{header} : {first_paragraph}\n\nTechnology Skills: {', '.join(tech_skills) if tech_skills else 'N/A'}\nSkills: {', '.join(skills) if skills else 'N/A'}\nKnowledge: {', '.join(knowledge) if knowledge else 'N/A'}\nMedian Wages: {median_wages}\nProjected Job Openings: {projected_openings}\nRelated Occupations: {', '.join(related_occupations) if related_occupations else 'N/A'}")
     return final
 
 def extract_job_ids(texts):
