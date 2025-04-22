@@ -14,6 +14,7 @@ const Result = () => {
                 <p className="subtitle">Based on your answers, here are your best matches:</p>
             </header>
             {careers.length > 0 ? (
+                <div>
                 <div className="results-container">
                     {careers.map((career, index) => (
                         <div className="career-card" key={index}>
@@ -31,6 +32,7 @@ const Result = () => {
                             <ul>{career.related_occupations.map((item, i) => <li key={i}>{item}</li>)}</ul>
                         </div>
                     ))}
+                    </div>
                     <button className="restart-button" onClick={() => navigate('/')}>Take Quiz Again</button>
                 </div>
             ) : (
