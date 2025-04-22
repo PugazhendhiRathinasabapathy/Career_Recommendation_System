@@ -3,7 +3,7 @@
 .header {
   background: linear-gradient(135deg, #e81111, #2236ef);  /* Gradient background for header */
   color: white;
-  padding: 80px 20px;  /* Increased padding for a more spacious header */
+  padding: 40px 20px;  /* Reduced padding for a less tall header */
   border-radius: 0 0 40px 40px; /* Rounded corners for the header */
   box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1); /* Subtle shadow */
   text-align: center;
@@ -25,10 +25,14 @@
 }
 
 .results-container {
-  font-family: 'Roboto', sans-serif;
-  font-size: 1em; /* Large font size for results */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8em; /* Large font size for results */
   line-height: 1.6;
-  margin: 40px;
+  margin: 20px auto;
   padding: 40px;
   background: #f4f4f9;  /* Soft background color for results */
   border-radius: 10px;
@@ -43,7 +47,8 @@
 }
 
 .results-container li {
-  font-size: 1.5em;
+  font-family: 'Montserrat', sans-serif; /* Ensure consistent font */
+  font-size: 1em; /* Normalized font size */
   text-align: left;
   margin-bottom: 15px;
   color: #555;
@@ -66,4 +71,53 @@
   background-color: #e45747;  /* Darker shade on hover */
   transform: scale(1.1);  /* Slightly enlarge on hover */
   box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);  /* Add shadow effect on hover */
+}
+
+.career-card {
+  background: #ffffff; /* White background for career card */
+  border-radius: 10px; /* Rounded corners */
+  padding: 30px;
+  width: 30%;
+  min-width: 280px;
+  max-width: 400px;
+  box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.1); /* Subtle shadow for the card */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  zoom: 90%; /* Slightly zoomed out for a more compact look */
+}
+
+.career-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.2);
+}
+
+.career-title {
+  font-family: 'Montserrat', sans-serif; /* Font for career title */
+  font-size: 1.5em;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #1a1a1a; /* Darker color for better readability */
+}
+
+.career-section-title {
+  font-family: 'Montserrat', sans-serif; /* Font for section titles */
+  font-size: 1em; /* Normalized font size */
+  font-weight: 600;
+  margin-top: 20px; /* Margin above section titles */
+  color: #444; /* Slightly lighter color */
+  text-align: left;
+}
+
+.career-section-content {
+  font-family: 'Montserrat', sans-serif; /* Font for section content */
+  font-size: 1em; /* Standard font size for content */
+  margin-top: 5px; /* Margin above content */
+  color: #666; /* Lighter color for content */
+}
+
+.career-meta {
+  font-family: 'Montserrat', sans-serif; /* Font for section content */
+  font-size: 1em; /* Standard font size for content */
+  color: #333;
+  text-align: left;
+  margin-top: 15px;
 }

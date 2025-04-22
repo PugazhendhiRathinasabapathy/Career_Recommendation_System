@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
-from models.recommendation import generate_question, get_career_recommendations
+from models.recommendation import  get_career_recommendations, gen_questions_langchain
 
 app = FastAPI()
 
@@ -16,30 +16,37 @@ app.add_middleware(
 
 # Store user responses in memory
 user_memory = []
+history = {}
 
 class UserResponse(BaseModel):
+    question: str
     selected_option: str
 
 @app.get("/get-question/")
 async def get_question():
     """Returns the first or next dynamically generated career-related question."""
-    question = generate_question(user_memory)
+    #question = generate_question(user_memory)
+    question = gen_questions_langchain(history)
     print(question)
     return {"question": question}
 
 @app.post("/submit-answer/")
 async def submit_answer(response: UserResponse):
-    print(len(user_memory))
+    print(len(history))
     """Stores user's response and returns the next question or career recommendation."""
     user_memory.append(response.selected_option)
+    history[response.question] = response.selected_option
 
-    if len(user_memory) >= 5:  # After 20 questions, return recommendations
-        careers = get_career_recommendations(user_memory)
+    if len(history) >= 20:  # After 20 questions, return recommendations
+        careers = get_career_recommendations(history)
         user_memory.clear()
-        print(user_memory)
+        print("*" * 50 + " Before clearing history:", history)
+        history.clear()
+        print("After clearing history:", history)
         return {"message": "Career recommendations ready!", "careers": careers}
 
-    next_question = generate_question(user_memory)
+    #next_question = generate_question(user_memory)
+    next_question = gen_questions_langchain(history)
     return {"question": next_question}
 
 # Run the FastAPI server

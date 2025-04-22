@@ -28,10 +28,10 @@ const HomePage = () => {
         <section className="features">
             <h2 className="section-title">Key Features</h2>
             <ul>
-                <li>AI-powered career recommendations</li>
-                <li>Personalized career quizzes</li>
-                <li>Provides top 3 career options</li>
-                <li>Guided learning resources</li>
+                <li>AI-powered career recommendations.</li>
+                <li>Personalized career quizzes.</li>
+                <li>Provides top 3 career options.</li>
+                <li>Provides all requirement info.</li>
             </ul>
         </section>
 

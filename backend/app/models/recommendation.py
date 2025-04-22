@@ -2,8 +2,10 @@ import sys
 sys.path.append("/opt/anaconda3/lib/python3.12/site-packages")  # Ensure correct package path
 
 from langchain_groq import ChatGroq  # Now import should work
+from langchain_core.output_parsers.string import StrOutputParser 
 from langchain.prompts import PromptTemplate
-from langchain.document_loaders import WebBaseLoader
+from langchain.prompts import ChatPromptTemplate
+from langchain_community.document_loaders import WebBaseLoader
 from dotenv import load_dotenv
 from models.data_clean import initialize_chromadb
 from bs4 import BeautifulSoup
@@ -25,8 +27,77 @@ def setup_llm():
 llm = setup_llm()
 _, collection = initialize_chromadb()
 user_memory = []
+history = {}
 
-def generate_question(previous_answers):
+def gen_questions_langchain(history):
+    history = history
+    prompt1 = ChatPromptTemplate.from_messages([
+        ("system", "You are an AI career advisor. Your ONLY task is to ask one career-related multiple-choice question at a time with exactly four answer options. You must ask questions in order to narrow the user's career path based on their responses. You must always provide 4 options no matter what, never ask a question without 4 options. Do not provide preamble or introduction. Respond strictly in this format:\n\nQuestion: <your question>\nA) <Option A>\nB) <Option B>\nC) <Option C>\nD) <Option D>"),
+        ("user", "What is your favorite programming language?")
+    ])
+
+    chain1 = prompt1 | llm | StrOutputParser()
+
+    categories = [
+        "Interests", 
+        "Skills", 
+        "Education", 
+        "Experience", 
+        "Work Environment Preferences", 
+        "Industry Preference", 
+        "Career Growth Aspirations"
+    ]
+    current_category = categories[len(history) % len(categories)]
+
+    prompt2 = ChatPromptTemplate.from_messages([
+        ("system", """Generates a career-related question dynamically based on previous answers.
+
+        You are an AI career advisor. Your ONLY task is to ask **one career-related multiple-choice question at a time** with exactly **four answer options**.
+        You must ask questions in order to narrow the user's career path based on their responses. 
+        You must always provide 4 options no matter what, never ask a question without 4 options.
+        You must NOT REPEAT questions.
+
+        ### **Instructions (Strict Adherence Required):**
+        1. **NO preamble, NO introduction, NO explanations.**
+        2. The question must be about **{current_category}**.
+        3. **Output Format:**
+        - **Question:** (Concise, relevant, and informative)
+        - **Four answer choices (A, B, C, D) is a must**
+        4. The next question must be **influenced by previous answers** but still follow category rotation.
+
+        ### **User Responses So Far:**
+        {history}
+
+        ### **Output Format (STRICTLY FOLLOW THIS, NO EXTRA TEXT):**
+        Question: <your generated question>  
+        A) <Option 1>  
+        B) <Option 2>  
+        C) <Option 3>  
+        D) <Option 4>  
+        """),
+        ("user", "Based on all previous answers, generate the next career question.")
+    ])
+
+    chain2 = prompt2 | llm | StrOutputParser()
+
+    if not history:
+        # First question
+        question = chain1.invoke({})
+        # history[question]=None  # Removed to prevent double entry
+        return question
+    else:
+        # Before passing to chain2, truncate history to recent entries
+        short_history = dict(list(history.items())[-5:])  # Use only the last 5 Q&A pairs
+
+        question = chain2.invoke({
+            "history": short_history,
+            "current_category": current_category
+        })
+        # history[question]=None  # Removed to prevent double entry
+        return question
+
+
+#def generate_question(previous_answers):
     """Generates a career-related question dynamically based on previous answers."""
     
     # Handle Empty previous_answers to prevent errors
@@ -81,20 +152,30 @@ def generate_question(previous_answers):
     # Invoke the LLM with the formatted string instead of a template object
     return llm.invoke(formatted_prompt)
 
-def get_career_recommendations(user_answers):
-    """Queries ChromaDB for career matches based on user answers."""
-    cleaned_answers = [answer.split(") ", 1)[1] if ") " in answer else answer for answer in user_answers]  # Removes 'A)', 'B)' etc.
-    # cleaned_answers = "I love coding"
-    query_text = " ".join(cleaned_answers)  # Combine cleaned responses
+def get_career_recommendations(history):
+    """Queries ChromaDB for career matches using history with RAG-style retrieval."""
+    if not history:
+        return ["No history available to recommend careers."]
+
+    # Extract just the answers from the history dictionary
+    cleaned_answers = []
+    for q, a in history.items():
+        if a and ") " in a:
+            cleaned_answers.append(a.split(") ", 1)[1])
+        elif a:
+            cleaned_answers.append(a)
+
+    query_text = " ".join(cleaned_answers)
+
+    # Retrieve top 3 documents relevant to the combined user answers
     results = collection.query(query_texts=[query_text], n_results=3)
-    if not results:
+
+    if not results or not results["documents"]:
         return ["No match found"]
-    else:
-        job_id = extract_job_ids(results["documents"])
-        jobs = fetch_web_results(job_id)
-        print(jobs)
-        return jobs
-    # return results["documents"] if results["documents"] else ["No match found"]
+    
+    job_id = extract_job_ids(results["documents"])
+    jobs = fetch_web_results(job_id)
+    return jobs
 
 def fetch_web_results(ids):
     final = []
@@ -180,6 +261,7 @@ def fetch_web_results(ids):
             related_list = related_occupations_section.find_all("li", limit=3)
             for item in related_list:
                 text = item.get_text(separator=" ", strip=True)
+                text = re.sub(r'Bright Outlook', '', text).strip()
                 text = re.sub(r'^\d{2}-\d{4}\.\d{2}\s*', '', text)  # Remove job codes like 25-1031.00
                 related_occupations.append(text)
 
@@ -187,7 +269,16 @@ def fetch_web_results(ids):
         header = re.sub(r'\d{2}-\d{4}\.\d{2}', '', header)  # Remove job codes like 11-1021.00
         header = re.sub(r'(Bright Outlook|Updated \d{4})', '', header).strip()  # Remove "Bright Outlook" and "Updated YYYY"
 
-        final.append(f"{header} : {first_paragraph}\n\nTechnology Skills: {', '.join(tech_skills) if tech_skills else 'N/A'}\nSkills: {', '.join(skills) if skills else 'N/A'}\nKnowledge: {', '.join(knowledge) if knowledge else 'N/A'}\nMedian Wages: {median_wages}\nProjected Job Openings: {projected_openings}\nRelated Occupations: {', '.join(related_occupations) if related_occupations else 'N/A'}")
+        final.append({
+            "title": header,
+            "description": first_paragraph,
+            "technology_skills": tech_skills if tech_skills else ["N/A"],
+            "skills": skills if skills else ["N/A"],
+            "knowledge": knowledge if knowledge else ["N/A"],
+            "median_wages": median_wages,
+            "projected_openings": projected_openings,
+            "related_occupations": related_occupations if related_occupations else ["N/A"]
+        })
     return final
 
 def extract_job_ids(texts):
@@ -201,18 +292,18 @@ def extract_job_ids(texts):
 
 def run_career_advisor():
     """Runs the interactive career recommendation process."""
-    global user_memory
-    for _ in range(5):  # Change to 20 for full experience
-        question = generate_question(user_memory)
-        print("\n", question)
+    # global user_memory
+    # for _ in range(5):  # Change to 20 for full experience
+    #     question = generate_question(user_memory)
+    #     print("\n", question)
         
-        # Simulate user selecting an answer (in real use case, get input from user)
-        user_response = input("Choose an option (A, B, C, D): ")
-        user_memory.append(user_response)  # Store answer
+    #     # Simulate user selecting an answer (in real use case, get input from user)
+    #     user_response = input("Choose an option (A, B, C, D): ")
+    #     user_memory.append(user_response)  # Store answer
 
-    # Get Career Recommendations
-    career_matches = get_career_recommendations(user_memory)
-    print("\n🎯 Recommended Careers:", extract_job_ids(career_matches))
+    # # Get Career Recommendations
+    # career_matches = get_career_recommendations(user_memory)
+    # print("\n🎯 Recommended Careers:", extract_job_ids(career_matches))
 
 # Run the program if executed directly
 if __name__ == "__main__":

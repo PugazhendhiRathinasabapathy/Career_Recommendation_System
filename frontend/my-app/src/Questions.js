@@ -21,7 +21,7 @@ const Questions = () => {
           const response = await axios.get("http://127.0.0.1:8000/get-question/");
           console.log("fetchQuestion Full API Response:", response.data); // Debugging
   
-          const text = response.data.question.content;
+          const text = response.data.question;
           console.log("Extracted Question:", text);
   
           if (typeof text !== "string") {
@@ -47,13 +47,14 @@ const Questions = () => {
 
     try {
         const response = await axios.post("http://127.0.0.1:8000/submit-answer/", {
-            selected_option: selectedOption
+            selected_option: selectedOption,
+            question: question
         });
 
         if (response.data.careers) {
             navigate('/result', { state: { careers: response.data.careers } });
         } else {
-            const text = response.data.question.content;
+            const text = response.data.question;
             console.log("Full API Response:", response.data); 
             if (typeof text === "string") {
                 setQuestion(text.split("A)")[0].trim());
