@@ -22,6 +22,10 @@ class UserResponse(BaseModel):
     question: str
     selected_option: str
 
+@app.get("/")
+def root():
+    return {"message": "Welcome to CareerPathAI 🚀"}
+
 @app.get("/get-question/")
 async def get_question():
     """Returns the first or next dynamically generated career-related question."""
