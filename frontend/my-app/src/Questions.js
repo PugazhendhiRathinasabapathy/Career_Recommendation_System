@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './Questions.css';
 
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = "https://careerpathai-7i5h.onrender.com";
 
 const Questions = () => {
     const navigate = useNavigate();  // Hook for navigation
