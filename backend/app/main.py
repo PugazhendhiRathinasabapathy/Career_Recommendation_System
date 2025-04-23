@@ -8,7 +8,10 @@ app = FastAPI()
 # Enable CORS for frontend connection
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  
+    allow_origins=[
+        "http://localhost:3000",
+        "https://career-recommendation-system.vercel.app"
+    ],
     allow_credentials=True,
     allow_methods=["*"],  
     allow_headers=["*"],  
