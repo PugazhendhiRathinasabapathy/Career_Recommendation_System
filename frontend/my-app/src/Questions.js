@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './Questions.css';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const Questions = () => {
     const navigate = useNavigate();  // Hook for navigation
     const [question, setQuestion] = useState('');
@@ -17,60 +19,60 @@ const Questions = () => {
     }, []);
 
     const fetchQuestion = async () => {
-      try {
-          const response = await axios.get("http://127.0.0.1:8000/get-question/");
-          const text = response.data.question;
-  
-          if (typeof text !== "string") {
-              throw new Error("Invalid response format: Expected a string");
-          }
-  
-          // Extract question and options
-          const parsedOptions = text.match(/[A-D]\) (.+)/g) || [];
-          if (parsedOptions.length !== 4) {
-              // If not exactly 4 options, fetch again
-              fetchQuestion();
-              return;
-          }
-          setQuestion(text.split("A)")[0].trim());
-          setOptions(parsedOptions);
-      } catch (error) {
-          console.error("Error fetching question:", error);
-      }
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    if (!selectedOption) {
-        alert("Please select an option!");
-        return;
-    }
-
-    try {
-        const response = await axios.post("http://127.0.0.1:8000/submit-answer/", {
-            selected_option: selectedOption,
-            question: question
-        });
-
-        if (response.data.careers) {
-            navigate('/result', { state: { careers: response.data.careers } });
-        } else {
+        try {
+            const response = await axios.get(`${API_URL}/get-question/`);
             const text = response.data.question;
-            console.log("Full API Response:", response.data); 
-            if (typeof text === "string") {
-                setQuestion(text.split("A)")[0].trim());
-                setOptions(text.match(/[A-D]\) (.+)/g) || []);
-            } else {
-                console.error("Invalid question format received:", text);
+    
+            if (typeof text !== "string") {
+                throw new Error("Invalid response format: Expected a string");
             }
-            setSelectedOption('');
-            setStep(step + 1);
+    
+            // Extract question and options
+            const parsedOptions = text.match(/[A-D]\) (.+)/g) || [];
+            if (parsedOptions.length !== 4) {
+                // If not exactly 4 options, fetch again
+                fetchQuestion();
+                return;
+            }
+            setQuestion(text.split("A)")[0].trim());
+            setOptions(parsedOptions);
+        } catch (error) {
+            console.error("Error fetching question:", error);
         }
-    } catch (error) {
-        console.error("Error submitting answer:", error);
-    }
-  };
+    };
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+    
+        if (!selectedOption) {
+            alert("Please select an option!");
+            return;
+        }
+    
+        try {
+            const response = await axios.post(`${API_URL}/submit-answer/`, {
+                selected_option: selectedOption,
+                question: question
+            });
+    
+            if (response.data.careers) {
+                navigate('/result', { state: { careers: response.data.careers } });
+            } else {
+                const text = response.data.question;
+                console.log("Full API Response:", response.data); 
+                if (typeof text === "string") {
+                    setQuestion(text.split("A)")[0].trim());
+                    setOptions(text.match(/[A-D]\) (.+)/g) || []);
+                } else {
+                    console.error("Invalid question format received:", text);
+                }
+                setSelectedOption('');
+                setStep(step + 1);
+            }
+        } catch (error) {
+            console.error("Error submitting answer:", error);
+        }
+    };
 
     return (
         <div className="questions-container">
