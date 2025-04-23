@@ -4,6 +4,7 @@ import axios from 'axios';
 import './Questions.css';
 
 const API_URL = "https://careerpathai-7i5h.onrender.com";
+// const API_URL = "http://127.0.0.1:8000";
 
 const Questions = () => {
     const navigate = useNavigate();
@@ -15,7 +16,14 @@ const Questions = () => {
 
     useEffect(() => {
         setStep(0);
-        fetchQuestion();
+        const preQuizHistory = JSON.parse(localStorage.getItem('preQuizHistory') || '{}');
+        // Send preQuizHistory to backend
+        axios.post(`${API_URL}/pre-quiz-history/`, preQuizHistory)
+          .then(() => fetchQuestion())
+          .catch((err) => {
+            console.error("Error sending preQuizHistory:", err);
+            fetchQuestion();
+          });
     }, []);
 
     const fetchQuestion = async () => {
@@ -109,6 +117,24 @@ const Questions = () => {
                             {option}
                         </label>
                     ))}
+                    {/* Option E: Irrelevant / Skip */}
+                    <label
+                        className="option"
+                        key="optionE"
+                        htmlFor="optionE"
+                        style={{ display: 'block', cursor: 'pointer' }}
+                    >
+                        <input
+                            type="radio"
+                            id="optionE"
+                            name="careerOption"
+                            value="E) Irrelevant / Skip"
+                            checked={selectedOption === "E) Irrelevant / Skip"}
+                            onChange={(e) => setSelectedOption(e.target.value)}
+                            style={{ marginRight: '10px' }}
+                        />
+                        E) Irrelevant / Skip
+                    </label>
                     <button className="submit-button" type="submit">Next</button>
                 </form>
             )}

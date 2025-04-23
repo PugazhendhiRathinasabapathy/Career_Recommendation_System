@@ -72,23 +72,26 @@
 }
 
 .submit-button {
-  position: fixed; /* Fixed positioning */
-  bottom: 20%; /* Space from the bottom */
-  left: 48%; /* Center horizontally */
-  transform: translateX(-50%); /* Exact centering */
-  padding: 20px 40px; /* Bigger padding for a larger button */
-  font-size: 1.4em; /* Larger font size */
+  margin-top: 1.5em;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  background: linear-gradient(90deg, #ff6f61 60%, #e45747 100%);
   color: #fff;
-  background-color: #ff6f61; /* Eye-catching color for the button */
   border: none;
-  border-radius: 30px; /* More rounded corners */
+  border-radius: 25px;
+  padding: 0.8em 2.2em;
+  font-size: 1.1em;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 2px 8px rgba(34,54,239,0.08);
+  transition: background 0.2s, transform 0.2s;
+  font-family: inherit;
 }
 
 .submit-button:hover {
-  background-color: #e45747; /* Darker shade on hover */
-  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  background: linear-gradient(90deg, #e45747 60%, #ff6f61 100%);
+  transform: scale(1.04);
 }
 
 .loading-spinner {

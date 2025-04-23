@@ -1,13 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './HomePage.css';
-import Logo from './Logo.png'; // Import your logo
+import Logo from './Logo.png';
+import PreQuizDialog from './PreQuizDialog';
 
 const HomePage = () => {
   const navigate = useNavigate();
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const handleDialogSubmit = (answers) => {
+    localStorage.setItem('preQuizHistory', JSON.stringify(answers));
+    navigate('/questions');
+  };
 
   const handleClick = () => {
-    navigate('/questions');
+    setDialogOpen(true);
   };
 
   return (
@@ -38,6 +45,12 @@ const HomePage = () => {
           <li>Provides all requirement info.</li>
         </ul>
       </section>
+
+      <PreQuizDialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        onSubmit={handleDialogSubmit}
+      />
 
       <footer className="footer">
         <p>© 2025 CareerPathAI. All rights reserved.</p>

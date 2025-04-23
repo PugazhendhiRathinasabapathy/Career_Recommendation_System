@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from models.recommendation import  get_career_recommendations, gen_questions_langchain
@@ -44,7 +44,7 @@ async def submit_answer(response: UserResponse):
     user_memory.append(response.selected_option)
     history[response.question] = response.selected_option
 
-    if len(history) >= 20:  # After 20 questions, return recommendations
+    if len(history) >= 25:  # After 20 questions, return recommendations
         careers = get_career_recommendations(history)
         user_memory.clear()
         print("*" * 50 + " Before clearing history:", history)
@@ -55,6 +55,14 @@ async def submit_answer(response: UserResponse):
     #next_question = generate_question(user_memory)
     next_question = gen_questions_langchain(history)
     return {"question": next_question}
+
+@app.post("/pre-quiz-history/")
+async def pre_quiz_history(request: Request):
+    data = await request.json()
+    # Store each pre-quiz answer in the history dictionary
+    for question, answer in data.items():
+        history[question] = answer
+    return {"status": "received"}
 
 # Run the FastAPI server
 if __name__ == "__main__":
