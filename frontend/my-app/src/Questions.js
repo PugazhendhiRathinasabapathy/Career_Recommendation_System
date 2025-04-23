@@ -19,10 +19,7 @@ const Questions = () => {
     const fetchQuestion = async () => {
       try {
           const response = await axios.get("http://127.0.0.1:8000/get-question/");
-          console.log("fetchQuestion Full API Response:", response.data); // Debugging
-  
           const text = response.data.question;
-          console.log("Extracted Question:", text);
   
           if (typeof text !== "string") {
               throw new Error("Invalid response format: Expected a string");
@@ -30,7 +27,12 @@ const Questions = () => {
   
           // Extract question and options
           const parsedOptions = text.match(/[A-D]\) (.+)/g) || [];
-          setQuestion(text.split("A)")[0].trim()); // First part is the question
+          if (parsedOptions.length !== 4) {
+              // If not exactly 4 options, fetch again
+              fetchQuestion();
+              return;
+          }
+          setQuestion(text.split("A)")[0].trim());
           setOptions(parsedOptions);
       } catch (error) {
           console.error("Error fetching question:", error);
@@ -80,7 +82,12 @@ const Questions = () => {
             <form className="question-form" onSubmit={handleSubmit}>
                 <h2>{question}</h2>
                 {options.map((option, index) => (
-                    <div className="option" key={index}>
+                    <label
+                        className="option"
+                        key={index}
+                        htmlFor={`option${index}`}
+                        style={{ display: 'block', cursor: 'pointer' }}
+                    >
                         <input
                             type="radio"
                             id={`option${index}`}
@@ -88,9 +95,10 @@ const Questions = () => {
                             value={option}
                             checked={selectedOption === option}
                             onChange={(e) => setSelectedOption(e.target.value)}
+                            style={{ marginRight: '10px' }}
                         />
-                        <label htmlFor={`option${index}`}>{option}</label>
-                    </div>
+                        {option}
+                    </label>
                 ))}
                 <button className="submit-button" type="submit">Next</button>
             </form>
