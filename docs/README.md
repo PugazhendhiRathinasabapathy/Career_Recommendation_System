@@ -1,5 +1,9 @@
 # CareerPathAI Using Large Language Model (LLaMa)
-![Screenshot 2025-03-25 at 7 50 10 PM](https://github.com/user-attachments/assets/0d139638-e26d-4f90-9b8b-47075cdd2ee6)
+
+The App is Live please feel free check it out: https://career-recommendation-system.vercel.app/ 
+
+![Screenshot 2025-04-23 at 11 17 37 PM](https://github.com/user-attachments/assets/f510814c-2760-447e-ac87-6c5dc9665717)
+
 ## Project Overview
 
 The **Career Recommendation System** is an AI-powered web application designed to assist individuals in making informed career decisions. By leveraging **Large Language Models (LLM)**, the system generates personalized career suggestions based on a series of questions related to the user’s interests, skills, and preferences. It dynamically adapts its questions based on the user’s answers, offering a tailored experience that helps users discover the best-fit career options.
@@ -14,7 +18,10 @@ This system utilizes advanced AI techniques and is especially useful for student
 - **AI-Powered**: The system uses **LLaMA** (a state-of-the-art language model) for natural language processing to generate career-related questions and recommendations.
 
 
-![Screenshot 2025-03-25 at 7 50 31 PM](https://github.com/user-attachments/assets/91208725-d464-4668-8c77-d97885e9e919)
+![Screenshot 2025-04-23 at 11 21 02 PM](https://github.com/user-attachments/assets/e57d97e9-219a-420d-b23e-f22757b32437)
+![Screenshot 2025-04-23 at 11 21 44 PM](https://github.com/user-attachments/assets/f9b5c110-b54d-4627-98f8-44ee1e7ac631)
+
+
 
 ## Tech Stack
 
@@ -30,7 +37,10 @@ This system utilizes advanced AI techniques and is especially useful for student
 3. **Career Recommendations**: The system analyzes the responses using **LLM** to suggest the top three career options.
 4. **Detailed Career Profiles**: The system fetches career-related data (e.g., job descriptions, salary ranges) dynamically using web scraping.
 
-![Screenshot 2025-03-25 at 7 51 52 PM](https://github.com/user-attachments/assets/9cd69104-05ef-46fd-a9e2-6cafb27e2fe9)
+![Screenshot 2025-04-23 at 11 23 01 PM](https://github.com/user-attachments/assets/699acad1-c3b2-46e8-a28f-8aa6fe2f0e83)
+![Screenshot 2025-04-23 at 11 23 20 PM](https://github.com/user-attachments/assets/5ae5433d-31bc-4fe1-8861-87a195a10ed1)
+
+
 
 ## Installation
 
